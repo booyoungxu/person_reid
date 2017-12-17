@@ -5,6 +5,7 @@ import os
 from .serialization import read_json
 import numpy as np
 
+
 def filterate(identities, indices, relabel=False):
     ret = []
     for index, pid in enumerate(indices): # pid set
@@ -20,6 +21,7 @@ def filterate(identities, indices, relabel=False):
                     ret.append((fname, pid, cam_id))
     return ret
 
+
 class DataSet(object):
     def __init__(self, root, split_index=0):
         self.root = root
@@ -31,10 +33,10 @@ class DataSet(object):
         self.num_train_ids, self.num_val_ids, self.num_trainval_ids = 0, 0, 0
 
     @property # jiang fangfa biancheng shuxing diaoyong keyi zhiyou getter er meiyou setter,bianyu canshu jiancha
-    def img_dir(self):
+    def images_dir(self):
         return os.path.join(self.root, 'images')
 
-    def load(self, num_val = 0.3, verbose=True):
+    def load(self, num_val=100, verbose=True):
         splits = read_json(os.path.join(self.root, 'splits.json'))
         if self.split_index > len(splits):
             raise ValueError('split_index must small than total splits {}'.format(len(splits)))
@@ -46,8 +48,10 @@ class DataSet(object):
             num_val = int(round(num*num_val))
         if num_val >= num or num_val < 0:
             raise ValueError('num_val is incorrect')
+
         train_pids = sorted(trainval_pids[:-num_val])
-        val_pids = sorted(trainval_pids[num_val:])
+        val_pids = sorted(trainval_pids[-num_val:])
+
         self.meta = read_json(os.path.join(self.root, 'meta.json'))
         identities = self.meta['identities']
         self.train = filterate(identities, train_pids, True)
