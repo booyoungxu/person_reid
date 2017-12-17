@@ -30,13 +30,13 @@ class Market1501(DataSet):
         if not os.path.exists(raw_images_dir):
             raise ValueError("Please put Market-1501-v15.09.15 into {}".format(raw_path))
 
-        images_dir = make_dir(os.path.join(self.root, 'images'))
-        make_dir(images_dir)
+        make_dir(os.path.join(self.root, 'images'))
+        images_dir = os.path.join(self.root, 'images')
 
         identities = [[[] for _ in range(6)] for _ in range(1502)]
 
         def rename(subdir, pattern=re.compile(r'([-\d]+)_c(\d)')):
-            fpaths = sorted(glob(os.path.join(raw_images_dir, subdir)))
+            fpaths = sorted(glob(os.path.join(raw_images_dir, subdir, '*.jpg')))
             pids = set()
             for fpath in fpaths:
                 fname = os.path.basename(fpath)
@@ -44,10 +44,10 @@ class Market1501(DataSet):
                 if pid == -1:   # junk images
                     continue
                 assert 0 <= pid <= 1501
-                assert 1 <= pid <= 6
+                assert 1 <= cam <= 6
                 cam -= 1
                 pids.add(pid)
-                fname =  ('{:08d}_{:02d}_{:04d}.jpg'
+                fname = ('{:08d}_{:02d}_{:04d}.jpg'
                          .format(pid, cam, len(identities[pid][cam])))
                 identities[pid][cam].append(fname)
                 shutil.copy(fpath, os.path.join(images_dir, fname))
