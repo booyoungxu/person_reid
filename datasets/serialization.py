@@ -2,6 +2,7 @@
 
 import json
 from utils.osutils import make_dir
+import os
 
 
 def read_json(fpath):
@@ -11,6 +12,6 @@ def read_json(fpath):
 
 
 def write_json(obj, fpath):
-    make_dir(fpath)
+    make_dir(os.path.dirname(fpath))
     with open(fpath, 'w') as f:
         json.dump(obj, f, indent=4, separators=(',', ':'))
